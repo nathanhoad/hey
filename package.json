@@ -1,6 +1,6 @@
 {
   "name": "@nathanhoad/hey",
-  "version": "1.0.0-pre",
+  "version": "1.0.0",
   "description": "Simple site/blog compiler",
   "main": "src/index.js",
   "bin": "bin/hey",
