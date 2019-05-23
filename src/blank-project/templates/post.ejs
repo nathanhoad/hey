@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <title><%= post.title %></title>
+  <meta property="og:title" content="<%= post.title %>" />
+  <meta name="description" content="<%= post.headers.description %>" />
+  <meta property="og:description" content="<%= post.headers.description %>" />
+  <meta property="og:image" content="<%= post.headers.share %>" />
+  <meta property="og:url" content="<%= url %>/<%= post.slug %>" />
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"  />
+  <link type="image/png" href="/icon.png" rel="icon" />
+</head>
+
+<body>
+  <article>
+    <% if (post.headers.format === 'partial') { %>
+      <%- post.html %>
+    <% } else { %>
+      <h1><%= post.title %></h1>
+      <aside>
+        Published <%= ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'][post.headers.published.getMonth()] %> <%= post.headers.published.getFullYear() %>
+        <ul>
+          <% post.headers.tags.forEach(tag => { %>
+            <li><a href="/tags/<%= tag %>">#<%= tag %></a></li>
+          <% }); %>
+        </ul>
+      </aside>
+
+      <%- post.html %>
+
+    <% } %>
+  </article>
+
+  <%- include('footer') %>
+
+</body>
+</html>

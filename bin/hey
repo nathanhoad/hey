@@ -1,0 +1,21 @@
+#!/usr/bin/env node
+
+const { init, compile, serve } = require('../src');
+
+const args = process.argv.slice(2);
+switch (args[0]) {
+  default:
+  case 'init':
+    init();
+    break;
+
+  case 'compile':
+  case 'build':
+    compile().then(process.exit);
+    break;
+
+  case 'run':
+  case 'serve':
+    compile().then(serve);
+    break;
+}

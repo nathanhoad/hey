@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <title><%= title %></title>
+  <meta property="og:title" content="<%= title %>" />
+  <meta name="description" content="<%= title %>" />
+  <meta property="og:description" content="<%= title %>" />
+  <meta property="og:image" content="<%= url %>/share.jpg" />
+  <meta property="og:url" content="<%= url %>" />
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"  />
+  <link type="image/png" href="/icon.png" rel="icon" />
+</head>
+
+<body>
+  <h1><%= title %></h1>
+  <ul>
+    <% posts.forEach(post => { %>
+      <li><a href="/<%= post.slug %>"><%= post.title %></a></li>
+    <% }); %>
+  </ul>
+
+  <%- include('footer') %>
+</body>
+</html>

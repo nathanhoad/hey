@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en-AU">
+<head>
+  <title>#<%= tag %></title>
+  <meta property="og:title" content="#<%= tag %>" />
+  <meta name="description" content="Posts tagged with #<%= tag %>" />
+  <meta property="og:description" content="Posts tagged with #<%= tag %>" />
+  <meta property="og:image" content="" />
+  <meta property="og:url" content="<%= url %>/tags/<%= tag %>" />
+
+  <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"  />
+  <link type="image/png" href="/favicon.png" rel="icon" />
+</head>
+
+<body>
+  <h1>#<%= tag %></h1>
+  <ul>
+    <% posts.forEach(post => { %>
+      <li><a href="/<%= post.slug %>"><%= post.title %></a></li>
+    <% }); %>
+  </ul>
+
+  <%- include('footer') %>
+</body>
+
+</html>
