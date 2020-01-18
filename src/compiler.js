@@ -35,7 +35,7 @@ module.exports = async function compile() {
     path.join(config.PUBLIC_PATH, 'index.html')
   );
   const assets = (await fs.readdir(config.TEMPLATES_PATH)).filter(f =>
-    ['.jpg', '.png', '.gif'].includes(path.extname(f))
+    ['.jpg', '.png', '.gif', '.js', '.css'].includes(path.extname(f))
   );
   await Promise.all(
     assets.map(async asset => {
