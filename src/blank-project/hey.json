@@ -3,5 +3,6 @@
   "url": "https://mywebsite.com",
   "posts": "posts",
   "public": "public",
-  "templates": "templates"
+  "templates": "templates",
+  "pages": ["archive"]
 }

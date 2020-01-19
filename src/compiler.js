@@ -60,10 +60,25 @@ module.exports = async function compile() {
     )
   );
 
+  // Write any extra pages
+  let pages = config.PAGES;
+  await Promise.all(pages.map(page => {
+    return writeTemplate(
+      page,
+      {
+        title: config.TITLE,
+        url: config.URL,
+        posts,
+        archive: groupByYear(posts.filter(p => !p.unlisted))
+      },
+      path.join(config.PUBLIC_PATH, page + '/index.html')
+    );
+  }));
+
   // Sitemap
   await writeTemplate(
     'sitemap',
-    { title: config.TITLE, url: config.URL, posts },
+    { title: config.TITLE, url: config.URL, posts, pages },
     path.join(config.PUBLIC_PATH, 'sitemap.xml')
   );
 

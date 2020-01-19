@@ -17,7 +17,8 @@ function config() {
     URL: conf.url,
     POSTS_PATH: path.join(process.cwd(), conf.posts),
     PUBLIC_PATH: path.join(process.cwd(), conf.public),
-    TEMPLATES_PATH: path.join(process.cwd(), conf.templates)
+    TEMPLATES_PATH: path.join(process.cwd(), conf.templates),
+    PAGES: typeof conf.pages !== "undefined" ? conf.pages : []
   };
 }
 
