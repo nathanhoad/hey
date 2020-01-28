@@ -22,7 +22,7 @@ function serve() {
   // Handle 404s with a redirect
   app.get('*', (request, response) => {
     if (config.PAGES.includes('404')) {
-      response.redirect('/404?path=/' + request.path);
+      response.redirect('/404?path=' + request.path);
     } else {
       response.redirect('/');
     }
