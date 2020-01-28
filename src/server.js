@@ -7,7 +7,7 @@ const fs = require('fs-extra');
 const compile = require('./compiler');
 
 /**
- * Run a web serve to serve out the static files
+ * Run a web server to serve out the static files
  */
 function serve() {
   const config = require('./config')();
@@ -15,11 +15,17 @@ function serve() {
   const app = express();
   app.use(helmet());
   app.use(compression());
+
+  // Static path for posts, etc
   app.use(express.static(config.PUBLIC_PATH));
 
-  // Redirect 404s
-  app.get('*', (request, reply) => {
-    reply.redirect('/');
+  // Handle 404s with a redirect
+  app.get('*', (request, response) => {
+    if (config.PAGES.includes('404')) {
+      response.redirect('/404?path=/' + request.path);
+    } else {
+      response.redirect('/');
+    }
   });
 
   // Start the server
