@@ -1,12 +1,12 @@
-const path = require('path');
-const fs = require('fs-extra');
-const chalk = require('chalk');
+const path = require("path");
+const fs = require("fs-extra");
+const chalk = require("chalk");
 
 function config() {
-  const expectedConfigPath = path.join(process.cwd(), 'hey.json');
+  const expectedConfigPath = path.join(process.cwd(), "hey.json");
 
   if (!fs.existsSync(expectedConfigPath)) {
-    console.log(Chalk.red('You are missing a hey.json config file.'));
+    console.log(Chalk.red("You are missing a hey.json config file."));
     process.exit();
   }
 

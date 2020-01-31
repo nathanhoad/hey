@@ -4,8 +4,5 @@
   "posts": "posts",
   "public": "public",
   "templates": "templates",
-  "pages": [
-    "404",
-    "archive"
-  ]
+  "pages": ["404", "archive"]
 }

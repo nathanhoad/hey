@@ -1,16 +1,16 @@
-const fs = require('fs-extra');
-const path = require('path');
-const chalk = require('chalk');
-const marked = require('marked');
-const ejs = require('ejs');
-const { minify } = require('html-minifier');
-const sass = require('node-sass');
+const fs = require("fs-extra");
+const path = require("path");
+const chalk = require("chalk");
+const marked = require("marked");
+const ejs = require("ejs");
+const { minify } = require("html-minifier");
+const sass = require("node-sass");
 
 /**
  * Compile all posts
  */
 module.exports = async function compile() {
-  const config = require('./config')();
+  const config = require("./config")();
 
   // Clean
   await fs.remove(config.PUBLIC_PATH);
@@ -25,21 +25,24 @@ module.exports = async function compile() {
 
   // Index
   await writeTemplate(
-    'index',
+    "index",
     {
       title: config.TITLE,
       url: config.URL,
       posts,
       archive: groupByYear(posts.filter(p => !p.unlisted))
     },
-    path.join(config.PUBLIC_PATH, 'index.html')
+    path.join(config.PUBLIC_PATH, "index.html")
   );
   const assets = (await fs.readdir(config.TEMPLATES_PATH)).filter(f =>
-    ['.jpg', '.png', '.gif', '.js', '.css'].includes(path.extname(f))
+    [".jpg", ".png", ".svg", ".gif", ".js", ".css"].includes(path.extname(f))
   );
   await Promise.all(
     assets.map(async asset => {
-      await fs.copyFile(path.join(config.TEMPLATES_PATH, asset), path.join(config.PUBLIC_PATH, asset));
+      await fs.copyFile(
+        path.join(config.TEMPLATES_PATH, asset),
+        path.join(config.PUBLIC_PATH, asset)
+      );
     })
   );
 
@@ -48,42 +51,44 @@ module.exports = async function compile() {
   await Promise.all(
     Object.keys(tags).map(tag =>
       writeTemplate(
-        'tag',
+        "tag",
         {
           title: config.TITLE,
           url: config.URL,
           tag,
           posts: tags[tag]
         },
-        path.join(config.PUBLIC_PATH, 'tags', tag, 'index.html')
+        path.join(config.PUBLIC_PATH, "tags", tag, "index.html")
       )
     )
   );
 
   // Write any extra pages
   let pages = config.PAGES;
-  await Promise.all(pages.map(page => {
-    return writeTemplate(
-      page,
-      {
-        title: config.TITLE,
-        url: config.URL,
-        posts,
-        archive: groupByYear(posts.filter(p => !p.unlisted))
-      },
-      path.join(config.PUBLIC_PATH, page + '/index.html')
-    );
-  }));
+  await Promise.all(
+    pages.map(page => {
+      return writeTemplate(
+        page,
+        {
+          title: config.TITLE,
+          url: config.URL,
+          posts,
+          archive: groupByYear(posts.filter(p => !p.unlisted))
+        },
+        path.join(config.PUBLIC_PATH, page + "/index.html")
+      );
+    })
+  );
 
   // Sitemap
   await writeTemplate(
-    'sitemap',
+    "sitemap",
     { title: config.TITLE, url: config.URL, posts, pages },
-    path.join(config.PUBLIC_PATH, 'sitemap.xml')
+    path.join(config.PUBLIC_PATH, "sitemap.xml")
   );
 
   // Robots
-  await fs.writeFile(path.join(config.PUBLIC_PATH, 'robots.txt'), '');
+  await fs.writeFile(path.join(config.PUBLIC_PATH, "robots.txt"), "");
 };
 
 /**
@@ -94,12 +99,16 @@ module.exports = async function compile() {
 function uniqueWords(text) {
   return text
     .toLowerCase()
-    .replace(/\(.*?\)/g, '')
-    .replace(/\<.*?\>/g, '')
-    .replace(/[^a-z0-9\s]+/g, '')
+    .replace(/\(.*?\)/g, "")
+    .replace(/\<.*?\>/g, "")
+    .replace(/[^a-z0-9\s]+/g, "")
     .split(/[\s\n]/)
     .filter(w => w.length >= 3)
-    .reduce((words, current) => words.concat(words.includes(current) ? null : current), [])
+    .reduce(
+      (words, current) =>
+        words.concat(words.includes(current) ? null : current),
+      []
+    )
     .filter(w => w);
 }
 
@@ -108,88 +117,102 @@ function uniqueWords(text) {
  * @returns {array<object>} The list of posts
  */
 async function getPosts() {
-  const config = require('./config')();
+  const config = require("./config")();
 
   const folders = await fs.readdir(config.POSTS_PATH);
-  return (await Promise.all(
-    folders.map(async slug => {
-      let post = {
-        path: path.join(config.POSTS_PATH, slug),
-        slug
-      };
+  return (
+    await Promise.all(
+      folders.map(async slug => {
+        let post = {
+          path: path.join(config.POSTS_PATH, slug),
+          slug
+        };
 
-      // Not a directory
-      if (!(await fs.stat(post.path)).isDirectory()) return null;
+        // Not a directory
+        if (!(await fs.stat(post.path)).isDirectory()) return null;
 
-      const postFile = path.join(post.path, slug) + '.text';
+        const postFile = path.join(post.path, slug) + ".text";
 
-      // No text file to read
-      if (!(await fs.exists(postFile))) return null;
+        // No text file to read
+        if (!(await fs.exists(postFile))) return null;
 
-      const text = await fs.readFile(postFile, 'utf8');
-      let tokens = await marked.lexer(text);
+        const text = await fs.readFile(postFile, "utf8");
+        let tokens = await marked.lexer(text);
 
-      // Extract the title
-      post.title = tokens.splice(tokens.findIndex(t => t.type === 'heading'), 1)[0].text;
+        // Extract the title
+        post.title = tokens.splice(
+          tokens.findIndex(t => t.type === "heading"),
+          1
+        )[0].text;
 
-      // Extract headers
-      const HEADER_TOKENS_START = tokens.findIndex(t => t.type === 'list_start');
-      const HEADER_TOKENS_END = tokens.findIndex(t => t.type === 'list_end');
-      let headerTokens = tokens.splice(HEADER_TOKENS_START, HEADER_TOKENS_END - HEADER_TOKENS_START + 1);
+        // Extract headers
+        const HEADER_TOKENS_START = tokens.findIndex(
+          t => t.type === "list_start"
+        );
+        const HEADER_TOKENS_END = tokens.findIndex(t => t.type === "list_end");
+        let headerTokens = tokens.splice(
+          HEADER_TOKENS_START,
+          HEADER_TOKENS_END - HEADER_TOKENS_START + 1
+        );
 
-      post.headers = {};
-      headerTokens
-        .filter(t => typeof t.text !== 'undefined')
-        .forEach(t => {
-          let [key, value] = t.text.split(/\:\s/);
+        post.headers = {};
+        headerTokens
+          .filter(t => typeof t.text !== "undefined")
+          .forEach(t => {
+            let [key, value] = t.text.split(/\:\s/);
 
-          switch (key) {
-            case 'published':
-              value = new Date(value);
-              break;
-            case 'tags':
-              value = value.split(/\,\s/);
-              break;
+            switch (key) {
+              case "published":
+                value = new Date(value);
+                break;
+              case "tags":
+                value = value.split(/\,\s/);
+                break;
+            }
+
+            if (value === "true" || value === "yes") value = true;
+            if (value === "false" || value === "no") value = false;
+
+            post.headers[key] = value;
+          });
+
+        // Share image
+        if (post.headers.share) {
+          if (
+            !post.headers.share.match(/^http/) &&
+            !post.headers.share.match(/^\//)
+          ) {
+            post.headers.share = `https://nathanhoad.net/${post.slug}/${post.headers.share}`;
           }
-
-          if (value === 'true' || value === 'yes') value = true;
-          if (value === 'false' || value === 'no') value = false;
-
-          post.headers[key] = value;
-        });
-
-      // Share image
-      if (post.headers.share) {
-        if (!post.headers.share.match(/^http/) && !post.headers.share.match(/^\//)) {
-          post.headers.share = `https://nathanhoad.net/${post.slug}/${post.headers.share}`;
-        }
-      } else {
-        if (post.headers.tags.includes('painting')) {
-          post.headers.share = 'https://nathanhoad.net/share-painting.jpg';
         } else {
-          post.headers.share = 'https://nathanhoad.net/share.jpg';
+          if (post.headers.tags.includes("painting")) {
+            post.headers.share = "https://nathanhoad.net/share-painting.jpg";
+          } else {
+            post.headers.share = "https://nathanhoad.net/share.jpg";
+          }
         }
-      }
 
-      // Share description
-      if (!post.headers.description) {
-        post.headers.description = tokens
-          .find(t => t.type === 'paragraph')
-          .text.replace(/\(.*\)/g, '')
-          .replace(/[\[\]]/g, '')
-          .replace(/\n/g, '');
+        // Share description
+        if (!post.headers.description) {
+          post.headers.description = tokens
+            .find(t => t.type === "paragraph")
+            .text.replace(/\(.*\)/g, "")
+            .replace(/[\[\]]/g, "")
+            .replace(/\n/g, "");
 
-        if (post.headers.description.length >= 200) {
-          post.headers.description = post.headers.description.slice(0, 200) + '...';
+          if (post.headers.description.length >= 200) {
+            post.headers.description =
+              post.headers.description.slice(0, 200) + "...";
+          }
         }
-      }
 
-      post.html = await marked.parser(tokens);
-      post.uniqueWords = uniqueWords(text);
+        post.html = await marked.parser(tokens);
+        post.uniqueWords = uniqueWords(text);
 
-      return post;
-    })
-  )).filter(p => p);
+        return post;
+      })
+    )
+  ).filter(p => p);
 }
 
 /**
@@ -199,7 +222,8 @@ async function getPosts() {
 function groupByYear(posts) {
   let archive = {};
   posts.forEach(p => {
-    archive[p.headers.published.getFullYear()] = archive[p.headers.published.getFullYear()] || [];
+    archive[p.headers.published.getFullYear()] =
+      archive[p.headers.published.getFullYear()] || [];
     archive[p.headers.published.getFullYear()].push(p);
   });
 
@@ -227,26 +251,29 @@ function groupByTag(posts) {
  * @param {object} post The post to compile
  */
 async function compilePost(post) {
-  const config = require('./config')();
+  const config = require("./config")();
 
-  if (post.format === 'html') {
+  if (post.format === "html") {
     await writeTemplate(
       null,
       { title: config.TITLE, url: config.URL, html: post.html },
-      path.join(config.PUBLIC_PATH, post.slug, 'index.html')
+      path.join(config.PUBLIC_PATH, post.slug, "index.html")
     );
   } else {
     await writeTemplate(
-      'post',
+      "post",
       { title: config.TITLE, url: config.URL, post },
-      path.join(config.PUBLIC_PATH, post.slug, 'index.html')
+      path.join(config.PUBLIC_PATH, post.slug, "index.html")
     );
   }
 
   // Copy any other files over
   (await fs.readdir(post.path)).forEach(async file => {
-    if (file === post.slug + '.text' || file === 'index.html') return;
-    await fs.copyFile(path.join(post.path, file), path.join(config.PUBLIC_PATH, post.slug, file));
+    if (file === post.slug + ".text" || file === "index.html") return;
+    await fs.copyFile(
+      path.join(post.path, file),
+      path.join(config.PUBLIC_PATH, post.slug, file)
+    );
   });
 
   if (!post.headers.published) {
@@ -262,16 +289,24 @@ async function compilePost(post) {
  * @param {string} toPath The filename to save this file to
  */
 async function writeTemplate(templateName, data, toPath) {
-  const config = require('./config')();
+  const config = require("./config")();
 
   let templateContent;
   if (templateName === null) {
-    templateContent = '<%- html %>';
+    templateContent = "<%- html %>";
   } else {
-    templateContent = await fs.readFile(path.join(config.TEMPLATES_PATH, templateName + '.ejs'), 'utf8');
+    templateContent = await fs.readFile(
+      path.join(config.TEMPLATES_PATH, templateName + ".ejs"),
+      "utf8"
+    );
     // Include sass
-    const css = await renderSass(path.join(config.TEMPLATES_PATH, 'styles.scss'));
-    templateContent = templateContent.replace('</head>', `<style type="text/css">${css}</style></head>`);
+    const css = await renderSass(
+      path.join(config.TEMPLATES_PATH, "styles.scss")
+    );
+    templateContent = templateContent.replace(
+      "</head>",
+      `<style type="text/css">${css}</style></head>`
+    );
   }
 
   templateContent = minify(templateContent, {
@@ -286,10 +321,13 @@ async function writeTemplate(templateName, data, toPath) {
     await fs.ensureDir(path.join(path.dirname(toPath)));
     await fs.writeFile(
       toPath,
-      ejs.render(templateContent, data, { views: [config.TEMPLATES_PATH], rmWhitespace: true })
+      ejs.render(templateContent, data, {
+        views: [config.TEMPLATES_PATH],
+        rmWhitespace: true
+      })
     );
   } catch (ex) {
-    console.log('Error:', ex);
+    console.log("Error:", ex);
     process.exit();
   }
 }

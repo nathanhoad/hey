@@ -1,22 +1,23 @@
 <!DOCTYPE html>
 <html lang="en-AU">
-
-<head>
+  <head>
     <title>Page not found</title>
-    <meta name="viewport" content="width=device-width, minimum-scale=1.0, maximum-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, minimum-scale=1.0, maximum-scale=1.0"
+    />
     <link type="image/png" href="/icon.png" rel="icon" />
-</head>
+  </head>
 
-<body>
+  <body>
     <h1>That page could not be found</h1>
     <p>Maybe you were looking for one of these instead?</p>
     <ul>
-        <% posts.forEach(post => { %>
-        <li><a href="/<%= post.slug %>"><%= post.title %></a></li>
-        <% }); %>
+      <% posts.forEach(post => { %>
+      <li><a href="/<%= post.slug %>"><%= post.title %></a></li>
+      <% }); %>
     </ul>
 
     <%- include('footer') %>
-</body>
-
+  </body>
 </html>

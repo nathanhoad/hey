@@ -1,16 +1,16 @@
-const express = require('express');
-const helmet = require('helmet');
-const compression = require('compression');
-const chalk = require('chalk');
-const fs = require('fs-extra');
+const express = require("express");
+const helmet = require("helmet");
+const compression = require("compression");
+const chalk = require("chalk");
+const fs = require("fs-extra");
 
-const compile = require('./compiler');
+const compile = require("./compiler");
 
 /**
  * Run a web server to serve out the static files
  */
 function serve() {
-  const config = require('./config')();
+  const config = require("./config")();
 
   const app = express();
   app.use(helmet());
@@ -20,23 +20,23 @@ function serve() {
   app.use(express.static(config.PUBLIC_PATH));
 
   // Handle 404s with a redirect
-  app.get('*', (request, response) => {
-    if (config.PAGES.includes('404')) {
-      response.redirect('/404?path=' + request.path);
+  app.get("*", (request, response) => {
+    if (config.PAGES.includes("404")) {
+      response.redirect("/404?path=" + request.path);
     } else {
-      response.redirect('/');
+      response.redirect("/");
     }
   });
 
   // Start the server
   const port = process.env.PORT || 3000;
   let listener = app.listen(port, () => {
-    console.log(chalk.bold.green('Running'), `http://localhost:${port}`);
+    console.log(chalk.bold.green("Running"), `http://localhost:${port}`);
   });
 
   // Enable auto restarting in development
-  if (process.env.NODE_ENV !== 'production') {
-    const enableDestroy = require('server-destroy');
+  if (process.env.NODE_ENV !== "production") {
+    const enableDestroy = require("server-destroy");
     enableDestroy(listener);
 
     // Recompile on changes to anything

@@ -20,7 +20,8 @@ That will generate a default `hey.json` config file:
   "url": "https://mywebsite.com",
   "posts": "./posts",
   "public": "./public",
-  "templates": "./templates"
+  "templates": "./templates",
+  "pages": ["404", "archive"]
 }
 ```
 
