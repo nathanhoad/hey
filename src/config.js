@@ -1,6 +1,6 @@
 const path = require("path");
 const fs = require("fs-extra");
-const chalk = require("chalk");
+const Chalk = require("chalk");
 
 function config() {
   const expectedConfigPath = path.join(process.cwd(), "hey.json");
@@ -18,7 +18,9 @@ function config() {
     POSTS_PATH: path.join(process.cwd(), conf.posts),
     PUBLIC_PATH: path.join(process.cwd(), conf.public),
     TEMPLATES_PATH: path.join(process.cwd(), conf.templates),
-    PAGES: typeof conf.pages !== "undefined" ? conf.pages : []
+    PAGES: typeof conf.pages !== "undefined" ? conf.pages : [],
+    FILES: typeof conf.files !== "undefined" ? conf.files : [],
+    HIGHLIGHT: typeof conf.highlight !== "undefined" ? conf.highlight : []
   };
 }
 

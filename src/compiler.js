@@ -8,14 +8,14 @@ const sass = require("node-sass");
 const Prism = require("prismjs");
 const loadLanguages = require("prismjs/components/");
 
-loadLanguages(["csharp"]);
+const config = require("./config")();
+
+loadLanguages(config.HIGHLIGHT);
 
 /**
  * Compile all posts
  */
 module.exports = async function compile() {
-  const config = require("./config")();
-
   // Clean
   await fs.remove(config.PUBLIC_PATH);
   await fs.ensureDir(config.PUBLIC_PATH);
@@ -41,11 +41,9 @@ module.exports = async function compile() {
   const assets = (await fs.readdir(config.TEMPLATES_PATH)).filter(f =>
     [".jpg", ".png", ".svg", ".gif", ".js", ".css"].includes(path.extname(f))
   );
-  await Promise.all(
-    assets.map(async asset => {
-      await fs.copyFile(path.join(config.TEMPLATES_PATH, asset), path.join(config.PUBLIC_PATH, asset));
-    })
-  );
+  for (const asset of assets.concat(config.FILES)) {
+    await fs.copyFile(path.join(config.TEMPLATES_PATH, asset), path.join(config.PUBLIC_PATH, asset));
+  }
 
   // Tags
   const tags = groupByTag(posts);
@@ -90,6 +88,9 @@ module.exports = async function compile() {
 
   // Robots
   await fs.writeFile(path.join(config.PUBLIC_PATH, "robots.txt"), "");
+
+  // Ignore trash
+  await fs.writeFile(path.join(config.PUBLIC_PATH, ".gitignore"), ".DS_Store\nThumbs.db\nnode_modules");
 };
 
 /**
@@ -114,8 +115,6 @@ function uniqueWords(text) {
  * @returns {array<object>} The list of posts
  */
 async function getPosts() {
-  const config = require("./config")();
-
   const folders = await fs.readdir(config.POSTS_PATH);
   return (
     await Promise.all(
@@ -266,8 +265,6 @@ function groupByTag(posts) {
  * @param {object} post The post to compile
  */
 async function compilePost(post) {
-  const config = require("./config")();
-
   if (post.format === "html") {
     await writeTemplate(
       null,
@@ -301,8 +298,6 @@ async function compilePost(post) {
  * @param {string} toPath The filename to save this file to
  */
 async function writeTemplate(templateName, data, toPath) {
-  const config = require("./config")();
-
   let templateContent;
   if (templateName === null) {
     templateContent = "<%- html %>";
