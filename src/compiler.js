@@ -142,10 +142,7 @@ async function getPosts() {
         )[0].text;
 
         // Extract headers
-        const HEADER_TOKENS_START = tokens.findIndex(t => t.type === "list_start");
-        const HEADER_TOKENS_END = tokens.findIndex(t => t.type === "list_end");
-        let headerTokens = tokens.splice(HEADER_TOKENS_START, HEADER_TOKENS_END - HEADER_TOKENS_START + 1);
-
+        let headerTokens = tokens[0].type === "list" ? tokens.shift().items : [];
         post.headers = {};
         headerTokens
           .filter(t => typeof t.text !== "undefined")
@@ -173,7 +170,7 @@ async function getPosts() {
             post.headers.share = `https://nathanhoad.net/${post.slug}/${post.headers.share}`;
           }
         } else {
-          if (post.headers.tags.includes("painting")) {
+          if (post.headers.tags && post.headers.tags.includes("painting")) {
             post.headers.share = "https://nathanhoad.net/share-painting.jpg";
           } else {
             post.headers.share = "https://nathanhoad.net/share.jpg";
