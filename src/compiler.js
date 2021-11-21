@@ -216,7 +216,7 @@ function highlightCode(html) {
     code = Prism.highlight(code, Prism.languages[language], language);
 
     // Give control keywords another class so we can target them for styling separately to normal keywords
-    ["if", "else", "for", "foreach", "in", "do", "while", "continue", "break", "return"].forEach(control => {
+    ["if", "elif", "else", "for", "foreach", "in", "do", "while", "continue", "break", "return"].forEach(control => {
       code = code.replace(
         new RegExp(`<span class="token keyword">${control}</span>`, "g"),
         `<span class="token keyword control">${control}</span>`
