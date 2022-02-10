@@ -20,7 +20,7 @@
     "helmet": "^4.6.0",
     "html-minifier": "^4.0.0",
     "marked": "^3.0.3",
-    "node-sass": "^6.0.1",
+    "node-sass": "^7.0.0",
     "prismjs": "^1.24.1",
     "server-destroy": "^1.0.1"
   }
